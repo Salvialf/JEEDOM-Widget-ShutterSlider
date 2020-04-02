@@ -2,7 +2,7 @@
 <!-- ********* Paramètres Optionnels ********* -->
 <!-- hauteur = hauteur de l'image en pixels (85 par défaut)   -->
 <!-- largeur = largeur de l'image en pixels (65 par défaut)   -->
-<!-- image = nom de l'image de fond (baie_blanc par défaut)   --> <!-- baie_blanc|baie_blanc2|baie_noir|baie_noir2|baie_bois|baie_bois2|fenetre|fenetre1,2,3,4 -->
+<!-- image = nom de l'image de fond (baie_blanc par défaut)   --> <!-- baie_blanc|baie_blanc2|baie_noir|baie_noir2|baie_bois|baie_bois2|fenetre|fenetre1,2,3,4|velux|garage|garage1,2,3 -->
 <!-- selecteur = couleur du sélecteur (blanc | bois | noir par défaut)   -->
 <!-- lames = couleur des lames (bois | noir | blanc par défaut)   -->
 <!-- ########### by @SALVIALF ;) ############# -->
@@ -33,19 +33,22 @@
       })
       var valueH = is_numeric('#hauteur#') ? parseFloat('#hauteur#'):85;
       var valueL = is_numeric('#largeur#') ? parseFloat('#largeur#'):65;
-      var imageVolet = ('#image#' !='#'+'image#') ? '#image#' : 'baie_blanc';
-      cmd.find('#shutterSlider').attr("style", "height: "+valueH+"px; width: +"+valueL+"px!important; background: url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/"+imageVolet+".png) no-repeat !important; background-position: bottom center !important; background-size: "+valueL+"px "+valueH+"px !important;");
+      var image = ('#image#' !='#'+'image#') ? '#image#' : 'baie_blanc';
+      cmd.find('#shutterSlider').attr("style", "height: "+valueH+"px; width: +"+valueL+"px!important; background: url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/"+image+".png) no-repeat !important; background-position: bottom center !important; background-size: "+valueL+"px "+valueH+"px !important;");
 
       var couleurSelecteur = ('#selecteur#' !='#'+'selecteur#') ? '#selecteur#' : 'noir';
       cmd.find('#custom-handle').css({"width": valueL+"px", "background": "url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/selecteur_"+couleurSelecteur+".png) center"});
       
+     if (image.search("garage")) { 
+          var hauteurLames = '9px'; } 
+        else { var hauteurLames = '15px'; }
+     
       var couleurLames = ('#lames#' !='#'+'lames#') ? '#lames#' : 'blanc';
       if (_options.display_value == 0) {
-        position = 'Fermé';
-        cmd.find('.ui-slider-range').css('background', 'url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/lamepleine_'+couleurLames+'.png)');
+        cmd.find('.ui-slider-range').css({'background': 'url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/lamepleine_'+couleurLames+'.png) center','background-size': 'auto '+hauteurLames+''});
       } else {
         position = _options.display_value+' #unite#';
-        cmd.find('.ui-slider-range').css('background', 'url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/lame_'+couleurLames+'.png)');
+        cmd.find('.ui-slider-range').css({'background': 'url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/lame_'+couleurLames+'.png) center','background-size': 'auto '+hauteurLames+''});
       }
       if (_options.display_value >= 99) { position = 'Ouvert'; }
       cmd.find('.sliderValue').text(position);
