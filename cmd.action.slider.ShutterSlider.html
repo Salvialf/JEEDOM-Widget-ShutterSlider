@@ -45,6 +45,7 @@
      
       var couleurLames = ('#lames#' !='#'+'lames#') ? '#lames#' : 'blanc';
       if (_options.display_value == 0) {
+		position = 'Fermé';
         cmd.find('.ui-slider-range').css({'background': 'url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/lamepleine_'+couleurLames+'.png) center','background-size': 'auto '+hauteurLames+''});
       } else {
         position = _options.display_value+' #unite#';
