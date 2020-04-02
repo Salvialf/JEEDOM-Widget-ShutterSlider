@@ -46,15 +46,16 @@
                                       "background-position: bottom center !important;"+
                                       "background-size: "+valueL+"px "+valueH+"px !important;");
       cmd.find('#custom-handle').css({"width": valueL+"px", "background": "url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/selecteur_"+couleurSelecteur+".png) center"});
-
-      if (position == 0) {
+	
+     if (position >= 99) {
+       position = 'Ouvert';
+     } else if (position == 0) {
         position = 'Fermé';
         cmd.find('.ui-slider-range').css({'background': 'url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/lamepleine_'+couleurLames+'.png) center','background-size': +valueL+'px '+hauteurLames+''});
-      } else {
+     } else {
         position = position+' #unite#';
         cmd.find('.ui-slider-range').css({'background': 'url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/lame_'+couleurLames+'.png) center','background-size': +valueL+'px '+hauteurLames+''});
-      }
-      if (_options.display_value >= 99) { position = 'Ouvert'; }
+     }
       cmd.find('.sliderValue').text(position);
          	
     }
