@@ -11,45 +11,43 @@
   <div class="title #hide_name#">
     <div class="cmdName">#name_display#</div>
   </div>
-  <div class="content-lg">
     <div id="shutterSlider" class="vertical-slider" value="#state#">
   	  <span id="custom-handle" class="ui-slider-handle"></span>
   </div>
-  </div>
-    <span style="display:block;margin-top:9px;" class="value sliderValue"></span>
+    <div class="value sliderValue"></div>
   <script>
    jeedom.cmd.update['#id#'] = function(_options){
-        var cmd = $('.cmd[data-cmd_id=#id#]')
-        cmd.attr('title','{{Date de valeur}} : '+_options.valueDate+'<br/>{{Date de collecte}} : '+_options.collectDate)
+        var cmd = $('.cmd[data-cmd_id=#id#]');
+        cmd.attr('title','{{Date de valeur}} : '+_options.valueDate+'<br/>{{Date de collecte}} : '+_options.collectDate);
         
       cmd.find('#shutterSlider').slider({
         classes: {
   			"ui-slider-range": "square"
              },
         min: ('#minValue#' == '') ? 0 : parseInt('#minValue#'),
-        max: ('#maxValue#' == '') ? 100 : parseInt('#maxValue#'),
+        max: ('#maxValue#' == '') ? 99 : parseInt('#maxValue#'),
         value: ('#state#' == '') ? 0 : parseInt(_options.display_value),
         orientation: 'vertical',
         animate: "slow",
         range: "max"
       })
-      var valueH = is_numeric('#hauteur#') ? parseFloat('#hauteur#'):85
-      var valueL = is_numeric('#largeur#') ? parseFloat('#largeur#'):65
-      var imageVolet = ('#image#' !='#'+'image#') ? '#image#' : 'baie_blanc'
+      var valueH = is_numeric('#hauteur#') ? parseFloat('#hauteur#'):85;
+      var valueL = is_numeric('#largeur#') ? parseFloat('#largeur#'):65;
+      var imageVolet = ('#image#' !='#'+'image#') ? '#image#' : 'baie_blanc';
       cmd.find('#shutterSlider').attr("style", "height: "+valueH+"px; width: +"+valueL+"px!important; background: url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/"+imageVolet+".png) no-repeat !important; background-position: bottom center !important; background-size: "+valueL+"px "+valueH+"px !important;");
 
-      var couleurSelecteur = ('#selecteur#' !='#'+'selecteur#') ? '#selecteur#' : 'noir'
+      var couleurSelecteur = ('#selecteur#' !='#'+'selecteur#') ? '#selecteur#' : 'noir';
       cmd.find('#custom-handle').css({"width": valueL+"px", "background": "url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/selecteur_"+couleurSelecteur+".png) center"});
       
-      var couleurLames = ('#lames#' !='#'+'lames#') ? '#lames#' : 'blanc'
+      var couleurLames = ('#lames#' !='#'+'lames#') ? '#lames#' : 'blanc';
       if (_options.display_value == 0) {
-        position = 'Fermé'
+        position = 'Fermé';
         cmd.find('.ui-slider-range').css('background', 'url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/lamepleine_'+couleurLames+'.png)');
       } else {
-        position = _options.display_value+' #unite#'
+        position = _options.display_value+' #unite#';
         cmd.find('.ui-slider-range').css('background', 'url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/lame_'+couleurLames+'.png)');
       }
-      if (_options.display_value >= 99) { position = 'Ouvert' }
+      if (_options.display_value >= 99) { position = 'Ouvert'; }
       cmd.find('.sliderValue').text(position);
     }
     jeedom.cmd.update['#id#']({display_value:'#state#'});
@@ -59,11 +57,14 @@
     });
 </script>
 <style>
-  #custom-handle {   
-	height: 9px;
-    border: none!important;
-	border-radius: 0 0 4px 4px!important;
-    margin-left: 5px;
-}
+#custom-handle {   
+  height: 9px;
+  border-radius: 0 0 4px 4px!important;
+  margin-left: 5px;
+  }
+.sliderValue {
+  position:relative;
+  margin-top:9px;
+  }
 </style>
 </div>
