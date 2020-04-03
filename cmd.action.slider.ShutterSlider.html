@@ -5,6 +5,7 @@
 <!-- image = nom de l'image de fond (baie_blanc par défaut)   --> <!-- baie_blanc|baie_blanc2|baie_noir|baie_noir2|baie_bois|baie_bois2|fenetre|fenetre1,2,3,4|velux|garage|garage1,2,3 -->
 <!-- selecteur = couleur du sélecteur (blanc | bois | noir par défaut)   -->
 <!-- lames = couleur des lames (bois | noir | blanc par défaut)   -->
+<!-- offset = valeur du pourcentage de décollement (désactivé par défaut)   -->
 <!-- ########### by @SALVIALF ;) ############# -->
 
 <div style="margin:5px;" class="cmd cmd-widget" data-type="action" data-subtype="slider" data-cmd_id="#id#" data-cmd_uid="#uid#" data-version="#version#" data-eqLogic_id="#eqLogic_id#">
@@ -24,42 +25,74 @@
       var couleurSelecteur = ('#selecteur#' !='#'+'selecteur#') ? '#selecteur#' : 'noir';
       var image = ('#image#' !='#'+'image#') ? '#image#' : 'baie_blanc';
       var position = ('#state#' == '') ? 0 : parseInt(_options.display_value);
-     cmd.attr('title','{{Date de valeur}} : '+_options.valueDate+'<br/>{{Date de collecte}} : '+_options.collectDate);
-      
-     if (image.search("garage")) { var hauteurLames = '9px'; } 
-        else { var hauteurLames = '15px'; }  
+      var hauteurLames = (image.search("garage")) ? '9px' : '15px';
+      var offset = ('#offset#' !='#'+'offset#' && '#offset#' != '' && '#offset#' >= 1) ? '#offset#' : false;
      
+   	if (offset != false) {
+     if (position >= 1 && position <= offset) {
+       	position = 1;
+     } else if (position > offset) {
+       	var D = offset;
+       	var E = (99-D)/4;
+     	var P = D/4;
+     	position = Math.trunc(((position-D)*P/E)+position-D);
+     } else { position = 0; }
+    } 
+
       cmd.find('#shutterSlider').slider({
         classes: {
   			"ui-slider-range": "square"
              },
-        min: ('#minValue#' == '') ? 0 : parseInt('#minValue#'),
-        max: ('#maxValue#' == '') ? 99 : parseInt('#maxValue#'),
+        min: 0,
+        max: 99,
         value: position,
         orientation: 'vertical',
         animate: "slow",
-        range: "max"
+        range: "max",
+        slide: function(event,ui) {
+          if (offset != false) {
+            if (ui.value < 1) {
+              cmd.find('.sliderValue').text('Fermé');
+            } else if (ui.value >= 1  && ui.value <= offset) {
+              cmd.find('.sliderValue').text(1+' #unite#');
+          	} else if (ui.value >= 99) {
+              cmd.find('.sliderValue').text('Ouvert');
+          	} else {
+              	var D = offset;
+       			var E = (99-D)/4;
+     			var P = D/4;
+        	cmd.find('.sliderValue').text(Math.trunc(((ui.value-D)*P/E)+ui.value-D)+' #unite#');
+            }
+          }
+          else if (ui.value < 1) {
+              cmd.find('.sliderValue').text('Fermé');
+            } else if (ui.value >= 99) {
+              cmd.find('.sliderValue').text('Ouvert');
+          	} else { 
+        	cmd.find('.sliderValue').text(ui.value+' #unite#');
+          }
+          }
       })
      
+      cmd.attr('title','{{Date de valeur}} : '+_options.valueDate+'<br/>{{Date de collecte}} : '+_options.collectDate);
       cmd.find('#shutterSlider').attr("style", "height: "+valueH+"px; width: +"+valueL+"px!important;"+ 
                                       "background: url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/"+image+".png) no-repeat !important;"+
                                       "background-position: bottom center !important;"+
                                       "background-size: "+valueL+"px "+valueH+"px !important;");
       cmd.find('#custom-handle').css({"width": valueL+"px", "background": "url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/selecteur_"+couleurSelecteur+".png) center"});
-	
+      cmd.find('.ui-slider-range').css({'background': 'url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/lame_'+couleurLames+'.png) center','background-size': +valueL+'px '+hauteurLames+''});
+     
      if (position >= 99) {
        position = 'Ouvert';
-     } else if (position == 0) {
+     } else if (position < 1) {
         position = 'Fermé';
         cmd.find('.ui-slider-range').css({'background': 'url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/lamepleine_'+couleurLames+'.png) center','background-size': +valueL+'px '+hauteurLames+''});
-     } else {
-        position = position+' #unite#';
-        cmd.find('.ui-slider-range').css({'background': 'url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/lame_'+couleurLames+'.png) center','background-size': +valueL+'px '+hauteurLames+''});
-     }
+     } else { position = position+' #unite#'; }
+     
       cmd.find('.sliderValue').text(position);
          	
     }
-    jeedom.cmd.update['#id#']({display_value:'#state#'});
+    jeedom.cmd.update['#id#']({display_value:'#state#',valueDate:'#valueDate#',collectDate:'#collectDate#'});
     
     $(".cmd[data-cmd_uid=#uid#] #shutterSlider").on('slidestop', function (event,ui) {
       jeedom.cmd.execute({id: '#id#', value: {slider: ui.value}});
