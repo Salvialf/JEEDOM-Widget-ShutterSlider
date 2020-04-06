@@ -6,6 +6,8 @@
 <!-- selecteur = couleur du sélecteur (blanc | bois | noir par défaut)   -->
 <!-- lames = couleur des lames (bois | noir | blanc par défaut)   -->
 <!-- offset = valeur du pourcentage de décollement (désactivé par défaut)   -->
+<!-- invert = inverser la position (1 | on | désactivé par défaut)   -->
+<!-- position = désactiver l'affichage de la position (off | on par défaut)   -->
 <!-- ########### by @SALVIALF ;) ############# -->
 
 <div style="margin:5px;" class="cmd cmd-widget" data-type="action" data-subtype="slider" data-cmd_id="#id#" data-cmd_uid="#uid#" data-version="#version#" data-eqLogic_id="#eqLogic_id#">
@@ -19,15 +21,17 @@
   <script>
    jeedom.cmd.update['#id#'] = function(_options){
       var cmd = $('.cmd[data-cmd_id=#id#]');
-      var valueH = is_numeric('#hauteur#') ? parseFloat('#hauteur#'):85;
-      var valueL = is_numeric('#largeur#') ? parseFloat('#largeur#'):65;
+      var valueH = is_numeric('#hauteur#') ? parseFloat('#hauteur#'):90;
+      var valueL = is_numeric('#largeur#') ? parseFloat('#largeur#'):90;
       var couleurLames = ('#lames#' !='#'+'lames#') ? '#lames#' : 'blanc';
       var couleurSelecteur = ('#selecteur#' !='#'+'selecteur#') ? '#selecteur#' : 'noir';
       var image = ('#image#' !='#'+'image#') ? '#image#' : 'baie_blanc';
       var position = ('#state#' == '') ? 0 : parseInt(_options.display_value);
-      var hauteurLames = (image.search("garage")) ? '9px' : '15px';
-      var offset = ('#offset#' !='#'+'offset#' && '#offset#' != '' && '#offset#' >= 1) ? '#offset#' : false;
-     
+	  var hauteurLames = (image.search("garage")) ? '9px' : '15px';
+      var offset = ('#offset#' !='#'+'offset#' && '#offset#' != '' && '#offset#' > 1) ? '#offset#' : false;
+     ('#position#' == 'off') ? cmd.find('.sliderValue').hide() : '';
+     ('#invert#' !='#'+'invert#' && '#invert#' != '') ? position=99-position : '';
+       
    	if (offset != false) {
      if (position >= 1 && position <= offset) {
        	position = 1;
@@ -54,7 +58,7 @@
             if (ui.value < 1) {
               cmd.find('.sliderValue').text('Fermé');
             } else if (ui.value >= 1  && ui.value <= offset) {
-              cmd.find('.sliderValue').text(1+' #unite#');
+              cmd.find('.sliderValue').text('Ajouré');
           	} else if (ui.value >= 99) {
               cmd.find('.sliderValue').text('Ouvert');
           	} else {
@@ -87,6 +91,8 @@
      } else if (position < 1) {
         position = 'Fermé';
         cmd.find('.ui-slider-range').css({'background': 'url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/lamepleine_'+couleurLames+'.png) center','background-size': +valueL+'px '+hauteurLames+''});
+     } else if (offset != false && position == 1) {
+       position = 'Ajouré';
      } else { position = position+' #unite#'; }
      
       cmd.find('.sliderValue').text(position);
@@ -95,7 +101,7 @@
     jeedom.cmd.update['#id#']({display_value:'#state#',valueDate:'#valueDate#',collectDate:'#collectDate#'});
     
     $(".cmd[data-cmd_uid=#uid#] #shutterSlider").on('slidestop', function (event,ui) {
-      jeedom.cmd.execute({id: '#id#', value: {slider: ui.value}});
+      jeedom.cmd.execute({id: '#id#', value: {slider: ('#invert#' !='#'+'invert#' && '#invert#' != '') ? 99-ui.value : ui.value}});
     });
 </script>
 <style>
