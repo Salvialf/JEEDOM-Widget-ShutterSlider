@@ -1,0 +1,104 @@
+<div style="margin:5px;" class="cmd cmd-widget" data-type="action" data-subtype="slider" data-cmd_id="#id#" data-cmd_uid="#uid#" data-version="#version#" data-template="tmplimg" >
+  <div class="title #hide_name#">
+    <div class="cmdName">#name_display#</div>
+  </div>
+    <div id="shutterSlider" class="vertical-slider" value="#state#">
+  	  <span id="custom-handle" class="ui-slider-handle"></span>
+  </div>
+    <div class="value sliderValue"></div>
+  <script>
+   jeedom.cmd.update['#id#'] = function(_options){
+      let cmd = $('.cmd[data-cmd_id=#id#]');
+      let valueH = is_numeric('#hauteur#') ? parseFloat('#hauteur#'):90;
+      let valueL = is_numeric('#largeur#') ? parseFloat('#largeur#'):90;
+      let couleurLames = ('#lames#' !='#'+'lames#') ? '#lames#' : 'blanc';
+      let couleurSelecteur = ('#selecteur#' !='#'+'selecteur#') ? '#selecteur#' : 'noir';
+      let image = ('#image#' !='#'+'image#') ? '#image#' : 'baie_blanc';
+      let position = ('#state#' == '') ? 0 : parseInt(_options.display_value);
+	  let hauteurLames = (image.search("garage")) ? '9px' : '15px';
+      let offset = ('#offset#' !='#'+'offset#' && '#offset#' != '' && '#offset#' > 1) ? '#offset#' : false;
+     ('#position#' == 'off') ? cmd.find('.sliderValue').hide() : '';
+     ('#invert#' == 'on') ? position=100-position : '' ;
+       
+   	if (offset != false) {
+     if (position >= 1 && position <= offset) {
+       	position = 1;
+     } else if (position > offset) {
+       	let D = offset;
+       	let E = (100-D)/4;
+     	let P = D/4;
+     	position = Math.trunc(((position-D)*P/E)+position-D);
+     } else { position = 0; }
+    } 
+
+      cmd.find('#shutterSlider').slider({
+        classes: {
+  			"ui-slider-range": "square"
+             },
+        min: 0,
+        max: 100,
+        value: position,
+        orientation: 'vertical',
+        animate: "slow",
+        range: "max",
+        slide: function(event,ui) {
+          if (offset != false) {
+            if (ui.value < 1) {
+              cmd.find('.sliderValue').text('Fermé');
+            } else if (ui.value >= 1  && ui.value <= offset) {
+              cmd.find('.sliderValue').text('Ajouré');
+          	} else if (ui.value >= 99) {
+              cmd.find('.sliderValue').text('Ouvert');
+          	} else {
+              	let D = offset;
+       			let E = (100-D)/4;
+     			let P = D/4;
+        	cmd.find('.sliderValue').text(Math.trunc(((ui.value-D)*P/E)+ui.value-D)+' #unite#');
+            }
+          }
+          else if (ui.value < 1) {
+              cmd.find('.sliderValue').text('Fermé');
+            } else if (ui.value >= 99) {
+              cmd.find('.sliderValue').text('Ouvert');
+          	} else { 
+        	cmd.find('.sliderValue').text(ui.value+' #unite#');
+          }
+          }
+      }).on('slidestop', function (event,ui) {
+      jeedom.cmd.execute({id: '#id#', value: {slider: ('#invert#' == 'on') ? 100-ui.value : ui.value}});
+    });
+     
+      cmd.attr('title','{{Date de valeur}} : '+_options.valueDate+'<br/>{{Date de collecte}} : '+_options.collectDate);
+      cmd.find('#shutterSlider').attr("style", "height: "+valueH+"px; width: +"+valueL+"px!important;"+ 
+                                      "background: url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/"+image+".png) no-repeat !important;"+
+                                      "background-position: bottom center !important;"+
+                                      "background-size: "+valueL+"px "+valueH+"px !important;");
+      cmd.find('#custom-handle').css({"width": valueL+"px", "background": "url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/selecteur_"+couleurSelecteur+".png) center"});
+      cmd.find('.ui-slider-range').css({'background': 'url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/lame_'+couleurLames+'.png) center','background-size': +valueL+'px '+hauteurLames+''});
+     
+     if (position >= 99) {
+       position = 'Ouvert';
+     } else if (position < 1) {
+        position = 'Fermé';
+        cmd.find('.ui-slider-range').css({'background': 'url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/lamepleine_'+couleurLames+'.png) center','background-size': +valueL+'px '+hauteurLames+''});
+     } else if (offset != false && position == 1) {
+       position = 'Ajouré';
+     } else { position = position+' #unite#'; }
+     
+      cmd.find('.sliderValue').text(position);
+         	
+    }
+    jeedom.cmd.update['#id#']({display_value:'#state#',valueDate:'#valueDate#',collectDate:'#collectDate#'});
+</script>
+<style>
+#custom-handle {   
+  height: 9px;
+  border-radius: 0 0 4px 4px!important;
+  margin-left: 5px;
+  }
+.sliderValue {
+  position:relative;
+  margin-top:9px;
+  }
+</style>
+</div>
