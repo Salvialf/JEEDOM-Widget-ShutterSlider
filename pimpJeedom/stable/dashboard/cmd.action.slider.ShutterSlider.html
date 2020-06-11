@@ -2,24 +2,27 @@
   <div class="title #hide_name#">
     <div class="cmdName">#name_display#</div>
   </div>
-    <div id="shutterSlider" class="vertical-slider" value="#state#">
+    <div id="shutterSlider" value="#state#">
   	  <span id="custom-handle" class="ui-slider-handle"></span>
   </div>
-    <div class="value sliderValue"></div>
+    <div class="sliderValue"></div>
+    <span class="timeCmd #value_history#" data-type="info" data-cmd_id="#value_id#"></span>
   <script>
    jeedom.cmd.update['#id#'] = function(_options){
       let cmd = $('.cmd[data-cmd_id=#id#]');
-      let valueH = is_numeric('#hauteur#') ? parseFloat('#hauteur#'):90;
-      let valueL = is_numeric('#largeur#') ? parseFloat('#largeur#'):90;
-      let couleurLames = ('#lames#' !='#'+'lames#') ? '#lames#' : 'blanc';
-      let couleurSelecteur = ('#selecteur#' !='#'+'selecteur#') ? '#selecteur#' : 'noir';
-      let image = ('#image#' !='#'+'image#') ? '#image#' : 'baie_blanc';
+      let height = is_numeric('#height#') ? parseFloat('#height#'):90;
+      let width = is_numeric('#width#') ? parseFloat('#width#'):90;
+      let couleurLames = ('#rails#' !='#'+'rails#') ? '#rails#' : 'light';
+      let couleurSelecteur = ('#handle#' !='#'+'handle#') ? '#handle#' : 'dark';
+      let image = ('#image#' !='#'+'image#') ? '#image#' : 'bay_white';
+      let images = ["bay_white","bay_white2","bay_black","bay_black2","bay_wood","bay_wood2","window","window1","window2","window3","window4","velux","garage","garage1","garage2","garage3"];
       let position = ('#state#' == '') ? 0 : parseInt(_options.display_value);
-	  let hauteurLames = (image.search("garage")) ? '9px' : '15px';
+	    let hauteurLames = (image.search("garage")) ? '9px' : '15px';
       let offset = ('#offset#' !='#'+'offset#' && '#offset#' != '' && '#offset#' > 1) ? '#offset#' : false;
-     ('#position#' == 'off') ? cmd.find('.sliderValue').hide() : '';
-     ('#invert#' == 'on') ? position=100-position : '' ;
-       
+      ('#position#' == 'unchecked') ? cmd.find('.sliderValue').hide() : '';
+      ('#invert#' == 'checked') ? position=100-position : '' ;
+      ('#CSS-time#' != '#'+'CSS-time#' && '#CSS-time#' != '') ? cmd.find('.timeCmd').attr('style','#CSS-time#') : '';
+
    	if (offset != false) {
      if (position >= 1 && position <= offset) {
        	position = 1;
@@ -29,7 +32,7 @@
      	let P = D/4;
      	position = Math.trunc(((position-D)*P/E)+position-D);
      } else { position = 0; }
-    } 
+    }
 
       cmd.find('#shutterSlider').slider({
         classes: {
@@ -60,45 +63,78 @@
               cmd.find('.sliderValue').text('Fermé');
             } else if (ui.value >= 99) {
               cmd.find('.sliderValue').text('Ouvert');
-          	} else { 
+          	} else {
         	cmd.find('.sliderValue').text(ui.value+' #unite#');
           }
           }
       }).on('slidestop', function (event,ui) {
-      jeedom.cmd.execute({id: '#id#', value: {slider: ('#invert#' == 'on') ? 100-ui.value : ui.value}});
+      jeedom.cmd.execute({id: '#id#', value: {slider: ('#invert#' == 'checked') ? 100-ui.value : ui.value}});
     });
-     
+
+    if (images.includes(image)) {
+      backgroundPath = 'plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider';
+    } else {
+      backgroundPath = 'data/img/ShutterSlider';
+    }
+
       cmd.attr('title','{{Date de valeur}} : '+_options.valueDate+'<br/>{{Date de collecte}} : '+_options.collectDate);
-      cmd.find('#shutterSlider').attr("style", "height: "+valueH+"px; width: +"+valueL+"px!important;"+ 
-                                      "background: url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/"+image+".png) no-repeat !important;"+
+      cmd.find('#shutterSlider').attr("style", "height: "+height+"px; width: +"+width+"px!important;"+
+                                      "background: url("+backgroundPath+"/"+image+".png) no-repeat !important;"+
                                       "background-position: bottom center !important;"+
-                                      "background-size: "+valueL+"px "+valueH+"px !important;");
-      cmd.find('#custom-handle').css({"width": valueL+"px", "background": "url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/selecteur_"+couleurSelecteur+".png) center"});
-      cmd.find('.ui-slider-range').css({'background': 'url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/lame_'+couleurLames+'.png) center','background-size': +valueL+'px '+hauteurLames+''});
-     
+                                      "background-size: "+width+"px "+height+"px !important;").removeClass("ui-corner-all");
+      cmd.find('#custom-handle').css({"width": width+"px", "background": "url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/selecteur_"+couleurSelecteur+".png) center"});
+      cmd.find('.ui-slider-range').css({'background': 'url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/lame_'+couleurLames+'.png) center','background-size': +width+'px '+hauteurLames+''});
+
      if (position >= 99) {
        position = 'Ouvert';
      } else if (position < 1) {
         position = 'Fermé';
-        cmd.find('.ui-slider-range').css({'background': 'url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/lamepleine_'+couleurLames+'.png) center','background-size': +valueL+'px '+hauteurLames+''});
+        cmd.find('.ui-slider-range').css({'background': 'url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/lamepleine_'+couleurLames+'.png) center','background-size': +width+'px '+hauteurLames+''});
      } else if (offset != false && position == 1) {
        position = 'Ajouré';
      } else { position = position+' #unite#'; }
-     
+
       cmd.find('.sliderValue').text(position);
-         	
+
+      if (isset(_options.valueDate)) {
+        if ('#time#' == 'duration') {
+          jeedom.cmd.displayDuration(_options.valueDate,cmd.find('.timeCmd'));
+      } else if ('#time#' == 'date') {
+          let week = ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'];
+          let date = new Date(_options.valueDate.replace(' ', 'T'));
+          let t = _options.valueDate.split(/[- :]/);
+          let format = week[date.getDay()]+" "+t[2]+"/"+t[1];
+          let time = "à "+t[3]+":"+t[4];
+          cmd.find('.timeCmd').html(format+'<br>'+time);
+      } else if ('#time#' == 'hour') {
+          let t = _options.valueDate.split(/[- :]/);
+          let time = "à "+t[3]+":"+t[4]+":"+t[5];
+          cmd.find('.timeCmd').html(time);
+        } else {
+          cmd.find('.timeCmd').attr('style','');
+        }
+      }
+
     }
     jeedom.cmd.update['#id#']({display_value:'#state#',valueDate:'#valueDate#',collectDate:'#collectDate#'});
 </script>
 <style>
-#custom-handle {   
+#custom-handle {
   height: 9px;
   border-radius: 0 0 4px 4px!important;
   margin-left: 5px;
   }
 .sliderValue {
+  font-weight:bold;
   position:relative;
   margin-top:9px;
   }
+.timeCmd {
+  font-size:11px;
+  padding:2px 4px 2px 4px;
+  margin-top:4px;
+  line-height:1em!important;
+  display:inline-block!important;
+}
 </style>
 </div>
