@@ -1,9 +1,9 @@
-<div style="margin:5px;" class="cmd cmd-widget" data-type="action" data-subtype="slider" data-cmd_id="#id#" data-cmd_uid="#uid#" data-version="#version#">
+<div class="shutterSlider cmd cmd-widget" data-type="action" data-subtype="slider" data-cmd_id="#id#" data-cmd_uid="#uid#" data-version="#version#">
   <div class="title #hide_name#">
     <div class="cmdName">#name_display#</div>
   </div>
-    <div id="shutterSlider" value="#state#">
-  	  <span id="custom-handle" class="ui-slider-handle"></span>
+    <div id="shutterSlider" class="square" value="#state#">
+  	  <span class="ui-slider-handle"></span>
   </div>
     <div class="sliderValue"></div>
     <span class="timeCmd #value_history#" data-type="info" data-cmd_id="#value_id#"></span>
@@ -37,6 +37,7 @@
 
       cmd.find('#shutterSlider').slider({
         classes: {
+          "ui-slider": "square",
   			"ui-slider-range": "square"
              },
         min: 0,
@@ -78,19 +79,19 @@
       backgroundPath = 'data/img/ShutterSlider';
     }
 
-      cmd.attr('title','{{Date de valeur}} : '+_options.valueDate+'<br/>{{Date de collecte}} : '+_options.collectDate);
-      cmd.find('#shutterSlider').attr("style", "height: "+height+"px; width: +"+width+"px!important;"+
-                                      "background: url("+backgroundPath+"/"+image+".png) no-repeat !important;"+
-                                      "background-position: bottom center !important;"+
-                                      "background-size: "+width+"px "+height+"px !important;").removeClass("ui-corner-all");
-      cmd.find('#custom-handle').css({"width": width+"px", "background": "url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/selecteur_"+couleurSelecteur+".png) center"});
-      cmd.find('.ui-slider-range').css({'background': 'url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/lame_'+couleurLames+'.png) center','background-size': +width+'px '+hauteurLames+''});
+    cmd.attr('title','{{Date de valeur}} : '+_options.valueDate+'<br/>{{Date de collecte}} : '+_options.collectDate);
+    cmd.css('--shutterSlider-height', height+'px');
+    cmd.css('--shutterSlider-width', width+'px');
+    cmd.css('--shutterSlider-lames-height', hauteurLames);
+    cmd.css('--shutterSlider-image', 'url('+backgroundPath+'/'+image+'.png');
+    cmd.css('--shutterSlider-lames', 'url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/lame_'+couleurLames+'.png)');
+    cmd.css('--shutterSlider-handle', 'url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/selecteur_'+couleurSelecteur+'.png)');
 
      if (position >= maxValue) {
        position = 'Ouvert';
      } else if (position < 1) {
         position = 'Fermé';
-        cmd.find('.ui-slider-range').css({'background': 'url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/lamepleine_'+couleurLames+'.png) center','background-size': +width+'px '+hauteurLames+''});
+        cmd.css('--shutterSlider-lames', 'url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/lamepleine_'+couleurLames+'.png)');
      } else if (offset != false && position == 1) {
        position = 'Ajouré';
      } else { position = position + ' #unite#'; }
@@ -120,17 +121,43 @@
     jeedom.cmd.update['#id#']({display_value:'#state#',valueDate:'#valueDate#',collectDate:'#collectDate#'});
 </script>
 <style>
-#custom-handle {
+.shutterSlider {
+  --shutterSlider-height: 90px;
+  --shutterSlider-width: 90px;
+  --shutterSlider-image: url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/bay_white.png);
+  --shutterSlider-lames: url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/lame_light.png);
+  --shutterSlider-lames-height: 9px;
+  --shutterSlider-handle: url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/selecteur_dark.png);
+  margin:5px;
+}
+.shutterSlider .ui-slider-vertical {
+  height: var(--shutterSlider-height);
+  width: var(--shutterSlider-width)!important;
+  background: var(--shutterSlider-image) no-repeat !important;
+  background-position: bottom center !important;
+  background-size: var(--shutterSlider-width) var(--shutterSlider-height)!important;
+}
+.shutterSlider .ui-slider .ui-slider-range {
+  width:100%;
+  background-color: unset!important;
+  background-image: unset!important;
+  background: var(--shutterSlider-lames) center!important;
+  background-size: var(--shutterSlider-width) var(--shutterSlider-lames-height)!important;
+  left: unset;
+}
+.shutterSlider .ui-slider-handle {
+  width: 100%;
   height: 9px;
+  background: var(--shutterSlider-handle) center!important;
   border-radius: 0 0 4px 4px!important;
-  margin-left: 5px;
+  left: unset!important;
   }
-.sliderValue {
+.shutterSlider .sliderValue {
   font-weight:bold;
   position:relative;
   margin-top:9px;
   }
-.timeCmd {
+.shutterSlider .timeCmd {
   font-size:11px;
   padding:2px 4px 2px 4px;
   margin-top:4px;
