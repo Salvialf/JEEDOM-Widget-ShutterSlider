@@ -1,8 +1,8 @@
 <div class="shutterSlider cmd cmd-widget" data-type="action" data-subtype="slider" data-cmd_id="#id#" data-cmd_uid="#uid#" data-version="#version#">
   <!-- ############ ShutterSlider ##############
  ********* Paramètres Optionnels *********
- height = hauteur de l'image en pixels (90 par défaut)
- width = largeur de l'image en pixels (90 par défaut)
+ height = hauteur de l'image en pixels (75 par défaut)
+ width = largeur de l'image en pixels (75 par défaut)
  image = nom de l'image de fond (baie_blanc par défaut)
 ** bay_white|bay_white2|bay_black|bay_black2|bay_wood|bay_wood2|window|window1,2,3,4|velux|garage|garage1,2,3 **
  handle = couleur du sélecteur (light | wood | dark par défaut)
@@ -25,8 +25,8 @@
     jeedom.cmd.update['#id#'] = function(_options) {
       let cmd = $('.cmd[data-cmd_id=#id#]')
       let maxValue = parseInt('#maxValue#')
-      let height = is_numeric('#height#') ? parseFloat('#height#') : 90
-      let width = is_numeric('#width#') ? parseFloat('#width#') : 90
+      let height = is_numeric('#height#') ? parseFloat('#height#') : 75
+      let width = is_numeric('#width#') ? parseFloat('#width#') : 75
       let couleurLames = ('#rails#' != '#' + 'rails#') ? '#rails#' : 'light'
       let couleurSelecteur = ('#handle#' != '#' + 'handle#') ? '#handle#' : 'dark'
       let image = ('#image#' != '#' + 'image#') ? '#image#' : 'bay_white'
@@ -136,8 +136,8 @@
   </script>
   <style>
     .shutterSlider {
-      --shutterSlider-height: 90px;
-      --shutterSlider-width: 90px;
+      --shutterSlider-height: 75px;
+      --shutterSlider-width: 75px;
       --shutterSlider-image: url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/bay_white.png);
       --shutterSlider-lames: url(data/customTemplates/dashboard/cmd.action.slider.ShutterSlider/lame_light.png);
       --shutterSlider-lames-height: 9px;

@@ -11,8 +11,8 @@
     jeedom.cmd.update['#id#'] = function(_options) {
       let cmd = $('.cmd[data-cmd_id=#id#]')
       let maxValue = parseInt('#maxValue#')
-      let height = is_numeric('#height#') ? parseFloat('#height#') : 90
-      let width = is_numeric('#width#') ? parseFloat('#width#') : 90
+      let height = is_numeric('#height#') ? parseFloat('#height#') : 75
+      let width = is_numeric('#width#') ? parseFloat('#width#') : 75
       let couleurLames = ('#rails#' != '#' + 'rails#') ? '#rails#' : 'light'
       let couleurSelecteur = ('#handle#' != '#' + 'handle#') ? '#handle#' : 'dark'
       let image = ('#image#' != '#' + 'image#') ? '#image#' : 'bay_white'
@@ -122,8 +122,8 @@
   </script>
   <style>
     .shutterSlider {
-      --shutterSlider-height: 90px;
-      --shutterSlider-width: 90px;
+      --shutterSlider-height: 75px;
+      --shutterSlider-width: 75px;
       --shutterSlider-image: url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/bay_white.png);
       --shutterSlider-lames: url(plugins/pimpJeedom/core/template/dashboard/cmd.action.slider.ShutterSlider/lame_light.png);
       --shutterSlider-lames-height: 9px;
